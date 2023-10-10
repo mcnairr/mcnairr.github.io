@@ -17,6 +17,7 @@
         async function runReport() {
             const initials = document.getElementById('initials').value;
             const apiUrl = `https://nld15mix54.execute-api.us-west-2.amazonaws.com/bot?initials=${initials}`;
+            document.getElementById('statusField').innerText = 'Sending...';
 
             try {
               let response = await fetch(apiUrl, {
@@ -27,6 +28,7 @@
               });
 
               if (!response.ok) {
+                  document.getElementById('statusField').innerText = 'API error occurred.';
                   throw new Error(`HTTP error! Status: ${response.status}`);
               }
 
