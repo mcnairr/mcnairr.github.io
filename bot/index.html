@@ -8,10 +8,10 @@
 </head>
 
 <body>
-        <label for="initials">Enter Manager Initials (First and Last):</label>
-        <input type="text" id="initials" placeholder="Enter your first and last initials" />
-        <button onclick="runReport()">Submit</button>
-        <p>Status: <span id="status">Awaiting input...</span></p>
+        <label for="initials">Enter Manager Initials:</label>
+        <input type="text" id="initials" placeholder="first and last initials" />
+        <button onclick="runReport()">Request Report</button>
+        <p>Status: <span id="statusField">Awaiting input...</span></p>
 
     <script>
         async function runReport() {
