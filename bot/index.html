@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckInBot Frontend</title>
+</head>
+
+<body>
+        <label for="initials">Enter Manager Initials (First and Last):</label>
+        <input type="text" id="initials" placeholder="Enter your first and last initials" />
+        <button onclick="runReport()">Submit</button>
+        <p>Status: <span id="status">Awaiting input...</span></p>
+
+    <script>
+        async function runReport() {
+            const initials = document.getElementById('initials').value;
+            const apiUrl = `https://nld15mix54.execute-api.us-west-2.amazonaws.com/bot?initials=${initials}`;
+
+            try {
+              let response = await fetch(apiUrl, {
+                  method: 'GET',
+                  headers: {
+                      'Accept': 'text/plain'  // Expecting plain text response
+                  }
+              });
+
+              if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+
+              const responseData = await response.text();
+              document.getElementById('statusField').innerText = responseData;
+
+          } catch (error) {
+              console.error('There was a problem with the fetch operation:', error.message);
+              document.getElementById('statusField').innerText = 'Error occurred. Please try again.';
+          }
+        }
+    </script>
+</body>
+
+</html>
