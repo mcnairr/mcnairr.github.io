@@ -8,10 +8,11 @@
 </head>
 
 <body>
-        <label for="initials">Enter Manager Initials:</label>
-        <input type="text" id="initials" placeholder="first and last initials" />
-        <button onclick="runReport()">Request Report</button>
-        <p>Status: <span id="statusField">Awaiting input...</span></p>
+    img src="bot.png" alt="Bot Image" style="width: 33%; display: block; margin: auto;">
+    <label for="initials">Enter Manager Initials:</label>
+    <input type="text" id="initials" placeholder="first and last initials" />
+    <button onclick="runReport()">Request Report</button>
+    <p>Status: <span id="statusField">Awaiting input...</span></p>
 
     <script>
         async function runReport() {
@@ -37,7 +38,7 @@
 
           } catch (error) {
               console.error('There was a problem with the fetch operation:', error.message);
-              document.getElementById('statusField').innerText = 'Error occurred. Please try again.';
+              document.getElementById('statusField').innerText = error.message;
           }
         }
     </script>
