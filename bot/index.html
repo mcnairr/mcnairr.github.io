@@ -5,14 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CheckInBot Frontend</title>
+    <style>div {text-align: center;}</style>
 </head>
 
 <body>
-    <p><img src="bot.png" alt="Bot Image" style="width: 33%; display: block; margin: auto; float: left;"><br></p>
-    <label for="initials">Enter Manager Initials:</label>
-    <input type="text" id="initials" placeholder="first and last initials" />
-    <button onclick="runReport()">Request Report</button>
-    <p>Status: <span id="statusField">Awaiting input...</span></p>
+    <img src="bot.png" alt="Bot Image" style="width: 33%; display: block; margin: auto; float: left;">
+    <div>
+        <label for="initials">Enter Manager Initials:</label>
+        <input type="text" id="initials" placeholder="first and last initials" />
+        <button onclick="runReport()">Request Report</button>
+        <p>Status: <span id="statusField">Awaiting input...</span></p>
+    </div>
 
     <script>
         async function runReport() {
