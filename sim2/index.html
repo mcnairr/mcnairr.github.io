@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summit Lawn Co. — SimBusiness</title>
+<style>
+/* ─── Variables ─────────────────────────────────────────────────────── */
+:root {
+  --bg:      #0a1409;
+  --bg2:     #101c10;
+  --bg3:     #162416;
+  --card:    #1b2e1b;
+  --card2:   #213621;
+  --border:  rgba(74,222,128,.18);
+  --border2: rgba(74,222,128,.55);
+  --text:    #dff0df;
+  --text2:   #7db98a;
+  --text3:   #3d6b48;
+  --green:   #4ade80;
+  --gold:    #fbbf24;
+  --sky:     #60c8f5;
+  --red:     #f87171;
+  --orange:  #fb923c;
+  --purple:  #c084fc;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; }
+button { cursor: pointer; font-family: inherit; }
+input { font-family: inherit; }
+.hidden { display: none !important; }
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* ─── LOGIN ─────────────────────────────────────────────────────────── */
+#screen-login {
+  flex-direction: column; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 50% 40%, rgba(74,222,128,.07) 0%, transparent 65%), var(--bg);
+}
+.logo-mark { font-size: 64px; margin-bottom: 10px; filter: drop-shadow(0 0 28px rgba(74,222,128,.45)); }
+.game-title { font-size: 38px; font-weight: 900; letter-spacing: -.03em; color: var(--text); }
+.game-title span { color: var(--green); }
+.game-sub { font-size: 14px; color: var(--text2); margin: 8px 0 44px; }
+.login-box {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 36px; width: 360px;
+}
+.login-box label { display: block; font-size: 12px; font-weight: 700; color: var(--text2); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+.login-input {
+  width: 100%; padding: 12px 16px; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text); font-size: 16px; outline: none; margin-bottom: 16px;
+  transition: border-color .15s;
+}
+.login-input:focus { border-color: var(--green); }
+.login-input::placeholder { color: var(--text3); }
+.btn-login {
+  width: 100%; padding: 14px; background: var(--green); color: #0a1409;
+  border: none; border-radius: 10px; font-size: 16px; font-weight: 800;
+  transition: all .15s;
+}
+.btn-login:hover { background: #86efac; transform: translateY(-1px); }
+
+/* ─── SETUP ─────────────────────────────────────────────────────────── */
+#screen-setup {
+  flex-direction: column; align-items: center; justify-content: center;
+  background: var(--bg); padding: 24px;
+}
+.setup-box {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 40px; width: 100%; max-width: 520px;
+}
+.setup-box h2 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+.setup-box p { font-size: 13px; color: var(--text2); margin-bottom: 28px; }
+.setup-field { margin-bottom: 20px; }
+.setup-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text2); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 8px; }
+.setup-crew {
+  display: flex; gap: 12px; margin: 24px 0;
+}
+.crew-chip {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px; text-align: center;
+}
+.crew-chip .chip-icon { font-size: 28px; margin-bottom: 6px; }
+.crew-chip .chip-name { font-size: 13px; font-weight: 700; }
+.crew-chip .chip-role { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.crew-chip .chip-wage { font-size: 12px; color: var(--gold); margin-top: 8px; font-weight: 700; }
+.credits-row {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(251,191,36,.07); border: 1px solid rgba(251,191,36,.22);
+  border-radius: 10px; padding: 14px 16px; margin-bottom: 24px;
+}
+.credits-row .cr-icon { font-size: 24px; }
+.credits-row .cr-text { flex: 1; font-size: 13px; color: var(--text2); }
+.credits-row .cr-val { font-size: 20px; font-weight: 800; color: var(--gold); }
+.btn-begin {
+  width: 100%; padding: 15px; background: var(--green); color: #0a1409;
+  border: none; border-radius: 10px; font-size: 16px; font-weight: 800;
+  transition: all .15s;
+}
+.btn-begin:hover { background: #86efac; transform: translateY(-1px); }
+
+/* ─── GAME SCREEN ────────────────────────────────────────────────────── */
+#screen-game { flex-direction: column; background: var(--bg); }
+
+/* Header */
+.g-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; height: 56px; background: var(--bg2);
+  border-bottom: 1px solid var(--border); flex-shrink: 0; position: sticky; top: 0; z-index: 50;
+}
+.g-header-left { display: flex; align-items: center; gap: 10px; }
+.g-logo { font-size: 22px; filter: drop-shadow(0 0 8px rgba(74,222,128,.5)); }
+.g-brand { font-size: 15px; font-weight: 800; color: var(--green); }
+.g-company { font-size: 13px; color: var(--text2); padding-left: 12px; border-left: 1px solid var(--border); }
+.g-week { font-size: 11px; font-weight: 700; background: rgba(74,222,128,.12); color: var(--green); padding: 3px 10px; border-radius: 99px; border: 1px solid rgba(74,222,128,.25); }
+.g-header-right { display: flex; align-items: center; gap: 10px; }
+.g-cash { font-size: 18px; font-weight: 800; color: var(--gold); }
+.g-credits {
+  font-size: 12px; font-weight: 700; color: var(--text2);
+  background: rgba(255,255,255,.05); border: 1px solid var(--border);
+  padding: 5px 12px; border-radius: 8px;
+}
+.g-credits span { color: var(--gold); }
+
+/* Tab nav */
+.g-tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border);
+  background: var(--bg2); flex-shrink: 0; padding: 0 16px;
+}
+.g-tab {
+  padding: 11px 20px; font-size: 13px; font-weight: 600; color: var(--text3);
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all .15s; margin-bottom: -1px;
+}
+.g-tab:hover { color: var(--text2); }
+.g-tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+/* Main content */
+.g-main { flex: 1; overflow-y: auto; padding: 20px 20px 100px; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* Section header */
+.sec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.sec-title { font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--text3); }
+.sec-chip { font-size: 12px; font-weight: 700; }
+
+/* ─── JOB CARDS ─────────────────────────────────────────────────────── */
+.jobs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width: 560px) { .jobs-grid { grid-template-columns: 1fr; } }
+
+.job-card {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 16px; padding: 18px 18px 14px;
+  cursor: pointer; transition: all .2s; position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.job-card:hover { border-color: rgba(74,222,128,.35); transform: translateY(-1px); }
+.job-card.accepted {
+  border-color: var(--green);
+  background: rgba(74,222,128,.07);
+  box-shadow: 0 0 24px rgba(74,222,128,.18);
+}
+.job-card.accepted:hover { transform: translateY(-1px); }
+
+.job-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.job-icon { font-size: 28px; }
+.job-badge {
+  font-size: 10px; font-weight: 800; letter-spacing: .06em; padding: 3px 9px;
+  border-radius: 6px; text-transform: uppercase;
+}
+.badge-small  { background: rgba(96,200,245,.15); color: var(--sky);    border: 1px solid rgba(96,200,245,.3); }
+.badge-medium { background: rgba(251,146,60,.15);  color: var(--orange); border: 1px solid rgba(251,146,60,.3); }
+.badge-large  { background: rgba(192,132,252,.15); color: var(--purple); border: 1px solid rgba(192,132,252,.3); }
+
+.job-name { font-size: 16px; font-weight: 800; margin-bottom: 2px; line-height: 1.2; }
+.job-street { font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+.job-meta { font-size: 12px; color: var(--text2); margin-bottom: 12px; }
+
+.job-price { font-size: 40px; font-weight: 900; color: var(--green); letter-spacing: -.03em; line-height: 1; margin-bottom: 14px; }
+.job-card.accepted .job-price { color: #86efac; }
+
+.job-accept-btn {
+  width: 100%; padding: 12px; border: none; border-radius: 10px;
+  font-size: 15px; font-weight: 800; transition: all .15s;
+  background: var(--green); color: #0a1409;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.job-accept-btn:hover { background: #86efac; }
+.job-card.accepted .job-accept-btn {
+  background: rgba(74,222,128,.15); color: var(--green);
+  border: 1.5px solid rgba(74,222,128,.5);
+}
+.job-check-overlay {
+  position: absolute; top: 12px; right: 12px; width: 28px; height: 28px;
+  background: var(--green); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 900; color: #0a1409;
+  opacity: 0; transform: scale(.5); transition: all .2s;
+}
+.job-card.accepted .job-check-overlay { opacity: 1; transform: scale(1); }
+
+/* ─── CAPACITY BAR ──────────────────────────────────────────────────── */
+.capacity-section { margin: 20px 0 0; }
+.capacity-row { display: flex; align-items: center; gap: 12px; }
+.cap-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; width: 56px; flex-shrink: 0; }
+.cap-slots { display: flex; gap: 6px; }
+.cap-slot {
+  width: 32px; height: 10px; border-radius: 5px; transition: all .25s;
+  background: var(--bg3); border: 1px solid var(--border);
+}
+.cap-slot.filled { background: var(--green); border-color: var(--green); }
+.cap-slot.overfull { background: var(--red); border-color: var(--red); }
+.cap-text { font-size: 12px; color: var(--text2); margin-left: 4px; }
+
+/* ─── CREW SECTION ──────────────────────────────────────────────────── */
+.crew-section { margin-top: 24px; }
+.crew-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width: 500px) { .crew-row { grid-template-columns: 1fr; } }
+
+.crew-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px; display: flex; align-items: center; gap: 14px;
+}
+.crew-avatar {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+}
+.crew-info { flex: 1 }
+.crew-name { font-size: 15px; font-weight: 800; }
+.crew-role { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.crew-status { margin-top: 8px; display: flex; gap: 8px; }
+.status-pip {
+  font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 99px;
+}
+.pip-great  { background: rgba(74,222,128,.15);  color: var(--green);  border: 1px solid rgba(74,222,128,.3); }
+.pip-ok     { background: rgba(251,191,36,.12);  color: var(--gold);   border: 1px solid rgba(251,191,36,.3); }
+.pip-tired  { background: rgba(251,146,60,.12);  color: var(--orange); border: 1px solid rgba(251,146,60,.3); }
+.pip-bad    { background: rgba(248,113,113,.12); color: var(--red);    border: 1px solid rgba(248,113,113,.3); }
+.crew-wage { font-size: 12px; color: var(--gold); font-weight: 700; margin-top: 4px; }
+
+/* ─── STICKY RUN BAR ────────────────────────────────────────────────── */
+.run-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  background: var(--bg2); border-top: 1px solid var(--border);
+  padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.run-summary { flex: 1; }
+.run-summary-main { font-size: 13px; font-weight: 700; color: var(--text); }
+.run-summary-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.run-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 28px; border: none; border-radius: 12px;
+  font-size: 15px; font-weight: 800; color: #0a1409;
+  background: var(--green);
+  box-shadow: 0 0 24px rgba(74,222,128,.3);
+  transition: all .2s; white-space: nowrap;
+}
+.run-btn:hover { background: #86efac; transform: translateY(-2px); box-shadow: 0 4px 32px rgba(74,222,128,.45); }
+.run-btn:disabled { background: var(--bg3); color: var(--text3); box-shadow: none; cursor: not-allowed; transform: none; }
+.run-btn.loading { background: #0e3d1a; color: var(--green); pointer-events: none; }
+.spinner { width: 18px; height: 18px; border: 2px solid rgba(74,222,128,.3); border-top-color: var(--green); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── RESULTS OVERLAY ───────────────────────────────────────────────── */
+#results-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.85);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.results-card {
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 36px; width: 100%; max-width: 440px;
+  animation: popIn .3s cubic-bezier(.175,.885,.32,1.275) forwards;
+}
+@keyframes popIn { from { opacity:0; transform:scale(.85); } to { opacity:1; transform:scale(1); } }
+.results-week-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+.results-headline {
+  font-size: 26px; font-weight: 900; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+}
+.results-body { margin-bottom: 24px; }
+.result-line {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.result-line:last-child { border-bottom: none; }
+.result-line-label { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+.result-line-val { font-size: 16px; font-weight: 800; }
+.result-net-row {
+  margin-top: 16px; padding: 16px 0 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.result-net-label { font-size: 14px; font-weight: 700; color: var(--text2); }
+.result-net-val { font-size: 36px; font-weight: 900; letter-spacing: -.03em; }
+.result-event {
+  margin-top: 16px; padding: 14px; background: var(--bg3); border-radius: 10px;
+  font-size: 13px; line-height: 1.5; border: 1px solid var(--border);
+}
+.result-event-type { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 4px; }
+.btn-next {
+  width: 100%; margin-top: 20px; padding: 16px;
+  background: var(--green); color: #0a1409; border: none;
+  border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer;
+  transition: all .15s;
+}
+.btn-next:hover { background: #86efac; }
+
+/* ─── HISTORY TAB ───────────────────────────────────────────────────── */
+.hist-chart-wrap {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; margin-bottom: 16px;
+}
+.hist-chart-title { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text3); margin-bottom: 16px; }
+#netChart { width: 100%; height: 180px; }
+.hist-list { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 4px 0; }
+.hist-row {
+  display: grid; grid-template-columns: 56px 1fr auto auto;
+  align-items: center; gap: 10px; padding: 14px 18px;
+  border-bottom: 1px solid var(--border); transition: background .15s;
+}
+.hist-row:last-child { border-bottom: none; }
+.hist-row:hover { background: var(--card2); }
+.hist-week { font-size: 11px; font-weight: 700; color: var(--text3); }
+.hist-label { font-size: 13px; font-weight: 600; }
+.hist-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.hist-jobs { font-size: 12px; color: var(--text2); text-align: center; min-width: 50px; }
+.hist-net { font-size: 14px; font-weight: 800; text-align: right; }
+.pos { color: var(--green); }
+.neg { color: var(--red); }
+
+/* ─── Fade-in ───────────────────────────────────────────────────────── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.fade-up { animation: fadeUp .35s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     LOGIN
+════════════════════════════════════════ -->
+<div id="screen-login" class="screen active flex" style="flex-direction:column;align-items:center;justify-content:center">
+  <div class="logo-mark">🌿</div>
+  <div class="game-title">Summit <span>Lawn</span> Co.</div>
+  <div class="game-sub">A SimBusiness Summer Prototype</div>
+
+  <div class="login-box fade-up">
+    <label for="login-user">Your Name</label>
+    <input id="login-user" class="login-input" type="text" placeholder="e.g. Ryan" maxlength="24" autocomplete="off">
+    <button class="btn-login" onclick="doLogin()">Start Your Summer Business →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SETUP
+════════════════════════════════════════ -->
+<div id="screen-setup" class="screen" style="flex-direction:column;align-items:center;justify-content:center;padding:24px">
+  <div class="setup-box fade-up">
+    <h2>🌿 Name your company</h2>
+    <p>You've got a mower, two teenagers, and a neighborhood full of lawns. Let's go.</p>
+
+    <div class="setup-field">
+      <label>Company Name</label>
+      <input id="setup-cname" class="login-input" type="text" value="Summit Lawn Co." placeholder="e.g. Green Crew">
+    </div>
+
+    <div class="setup-crew">
+      <div class="crew-chip">
+        <div class="chip-icon">🧑‍🌾</div>
+        <div class="chip-name">Tyler</div>
+        <div class="chip-role">Mower · Age 17</div>
+        <div class="chip-wage">$15 / hr</div>
+      </div>
+      <div class="crew-chip">
+        <div class="chip-icon">📋</div>
+        <div class="chip-name">Jordan</div>
+        <div class="chip-role">Scheduler · Age 16</div>
+        <div class="chip-wage">$12 / hr</div>
+      </div>
+    </div>
+
+    <div class="credits-row">
+      <div class="cr-icon">⚡</div>
+      <div class="cr-text">Each week costs 10 simulation credits</div>
+      <div class="cr-val">100 ⚡</div>
+    </div>
+
+    <button class="btn-begin" onclick="beginGame()">🚀 Begin — Week 1</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     GAME
+════════════════════════════════════════ -->
+<div id="screen-game" class="screen" style="flex-direction:column">
+
+  <!-- Header -->
+  <header class="g-header">
+    <div class="g-header-left">
+      <span class="g-logo">🌿</span>
+      <span class="g-brand" id="g-brand">Summit Lawn Co.</span>
+      <div style="padding-left:12px;border-left:1px solid var(--border);display:flex;align-items:center;gap:8px">
+        <span class="g-company" id="g-owner">Owner</span>
+        <span class="g-week" id="g-week-badge">Week 3</span>
+      </div>
+    </div>
+    <div class="g-header-right">
+      <div class="g-cash" id="g-cash">$273</div>
+      <div class="g-credits">⚡ <span id="g-credits">80</span></div>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="g-tabs">
+    <button class="g-tab active" onclick="showTab('jobs')" id="tabn-jobs">📋 Jobs</button>
+    <button class="g-tab" onclick="showTab('history')" id="tabn-history">📈 History</button>
+  </nav>
+
+  <!-- Main -->
+  <div class="g-main">
+
+    <!-- ─── JOBS TAB ─── -->
+    <div id="tab-jobs" class="tab-pane active">
+
+      <div class="sec-header" style="margin-bottom:14px">
+        <span class="sec-title" id="jobs-heading">Available This Week</span>
+        <span class="sec-chip" id="jobs-accepted-chip" style="color:var(--text3)">0 of 4 accepted</span>
+      </div>
+
+      <div class="jobs-grid" id="jobs-grid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Capacity -->
+      <div class="capacity-section">
+        <div class="capacity-row">
+          <span class="cap-label">Tyler</span>
+          <div class="cap-slots" id="cap-slots">
+            <div class="cap-slot" id="slot-0"></div>
+            <div class="cap-slot" id="slot-1"></div>
+            <div class="cap-slot" id="slot-2"></div>
+            <div class="cap-slot" id="slot-3"></div>
+          </div>
+          <span class="cap-text" id="cap-text">0 / 4 jobs this week</span>
+        </div>
+      </div>
+
+      <!-- Crew strip -->
+      <div class="crew-section">
+        <div class="sec-header" style="margin-bottom:12px">
+          <span class="sec-title">Your Crew</span>
+        </div>
+        <div class="crew-row">
+          <div class="crew-card">
+            <div class="crew-avatar" style="background:rgba(251,146,60,.12);border:1px solid rgba(251,146,60,.25)">🧑‍🌾</div>
+            <div class="crew-info">
+              <div class="crew-name">Tyler</div>
+              <div class="crew-role">Mower · Age 17</div>
+              <div class="crew-status" id="tyler-status">
+                <span class="status-pip pip-great">Ready</span>
+              </div>
+              <div class="crew-wage">$15/hr</div>
+            </div>
+          </div>
+          <div class="crew-card">
+            <div class="crew-avatar" style="background:rgba(96,200,245,.1);border:1px solid rgba(96,200,245,.2)">📋</div>
+            <div class="crew-info">
+              <div class="crew-name">Jordan</div>
+              <div class="crew-role">Scheduler · Age 16</div>
+              <div class="crew-status" id="jordan-status">
+                <span class="status-pip pip-great">On it</span>
+              </div>
+              <div class="crew-wage">$12/hr</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─── HISTORY TAB ─── -->
+    <div id="tab-history" class="tab-pane">
+      <div class="hist-chart-wrap">
+        <div class="hist-chart-title">Cash Balance by Week</div>
+        <canvas id="netChart"></canvas>
+      </div>
+      <div class="hist-list" id="hist-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </div><!-- /g-main -->
+
+  <!-- Sticky Run Bar (only visible on Jobs tab) -->
+  <div class="run-bar" id="run-bar">
+    <div class="run-summary">
+      <div class="run-summary-main" id="run-main-text">Accept at least 1 job to simulate the week</div>
+      <div class="run-summary-sub" id="run-sub-text">Each week costs 10 ⚡</div>
+    </div>
+    <button class="run-btn" id="run-btn" onclick="runWeek()" disabled>
+      <span id="run-btn-icon">▶</span>
+      <span id="run-btn-label">Run Week</span>
+    </button>
+  </div>
+
+</div><!-- /screen-game -->
+
+<!-- ═══════════════════════════════════════
+     RESULTS OVERLAY
+════════════════════════════════════════ -->
+<div id="results-overlay" class="hidden">
+  <div class="results-card" id="results-card">
+    <div class="results-week-label" id="res-week-label">WEEK 3 COMPLETE</div>
+    <div class="results-headline" id="res-headline">🌿 Good Week!</div>
+    <div class="results-body">
+      <div class="result-line">
+        <span class="result-line-label">💰 Jobs completed</span>
+        <span class="result-line-val pos" id="res-revenue">$0</span>
+      </div>
+      <div class="result-line">
+        <span class="result-line-label">⛽ Gas &amp; supplies</span>
+        <span class="result-line-val neg" id="res-gas">−$0</span>
+      </div>
+      <div class="result-line">
+        <span class="result-line-label">👥 Crew wages</span>
+        <span class="result-line-val neg" id="res-wages">−$0</span>
+      </div>
+    </div>
+    <div class="result-net-row">
+      <span class="result-net-label">NET</span>
+      <span class="result-net-val" id="res-net">+$0</span>
+    </div>
+    <div class="result-event" id="res-event">
+      <div class="result-event-type" id="res-event-type">🌟 Event</div>
+      <div id="res-event-body">Something happened.</div>
+    </div>
+    <button class="btn-next" id="btn-next" onclick="nextWeek()">Next Week →</button>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   GAME DATA
+══════════════════════════════════════════ */
+
+// Jobs available each week
+const WEEK_JOBS = {
+  3: [
+    { id:'w3a', icon:'🏢', name:'Greenview HOA',      street:'Highland Ave',    size:'large',  hrs:3,   price:95  },
+    { id:'w3b', icon:'🏡', name:'Johnson Residence',  street:'Oak Street',      size:'small',  hrs:1,   price:35  },
+    { id:'w3c', icon:'🏡', name:'Davis Family',        street:'Maple Lane',      size:'medium', hrs:2,   price:55  },
+    { id:'w3d', icon:'🏠', name:'Park View Apts',      street:'Elm Blvd',        size:'small',  hrs:1.5, price:40  },
+  ],
+  4: [
+    { id:'w4a', icon:'🏢', name:'Sunrise Condos',     street:'Pine Ridge Rd',   size:'large',  hrs:4,   price:120 },
+    { id:'w4b', icon:'🏡', name:'Brown Family',        street:'Cedar Ave',       size:'medium', hrs:2,   price:60  },
+    { id:'w4c', icon:'🏡', name:'Chen Residence',      street:'Walnut Way',      size:'small',  hrs:1,   price:30  },
+    { id:'w4d', icon:'🏢', name:'Oakwood HOA',         street:'Summit Blvd',     size:'large',  hrs:3.5, price:105 },
+  ],
+};
+
+const EVENTS = {
+  3: { type:'⭐ 5-Star Review', body:'Greenview HOA left a 5-star review on Nextdoor. New customers may call next week.' },
+  4: { type:'🔧 Equipment Note', body:"Tyler's mower needed a quick belt adjustment. No jobs were affected, but keep an eye on it." },
+};
+
+const HISTORY = [
+  { week:1, label:'First Week',       jobs:2, rev:75,  costs:195, net:-120 },
+  { week:2, label:'Getting the Hang', jobs:3, rev:150, costs:195, net: -45  },
+];
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+const S = {
+  username: 'Owner',
+  company:  'Summit Lawn Co.',
+  week:     3,
+  cash:     273,
+  credits:  80,
+  accepted: new Set(),   // job ids accepted this week
+  history:  [...HISTORY],
+  weekRan:  false,
+  tylerStatus: 'ready',   // ready / tired / burned
+  jordanStatus: 'great',
+};
+
+/* ══════════════════════════════════════════
+   SCREEN NAV
+══════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim() || 'Owner';
+  S.username = u;
+  document.getElementById('setup-cname').value = u + "'s Lawn Co.";
+  showScreen('setup');
+}
+document.getElementById('login-user').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function beginGame() {
+  S.company = document.getElementById('setup-cname').value.trim() || 'Summit Lawn Co.';
+  document.getElementById('g-brand').textContent = S.company;
+  document.getElementById('g-owner').textContent = S.username;
+  document.getElementById('g-week-badge').textContent = 'Week ' + S.week;
+  document.getElementById('g-cash').textContent = '$' + S.cash;
+  document.getElementById('g-credits').textContent = S.credits;
+  showScreen('game');
+  renderJobs();
+  renderHistory();
+}
+
+/* ══════════════════════════════════════════
+   TABS
+══════════════════════════════════════════ */
+function showTab(id) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.g-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.getElementById('tabn-' + id).classList.add('active');
+  document.getElementById('run-bar').style.display = id === 'jobs' ? 'flex' : 'none';
+  if (id === 'history') { setTimeout(drawChart, 50); }
+}
+
+/* ══════════════════════════════════════════
+   RENDER JOBS
+══════════════════════════════════════════ */
+function sizeLabel(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function renderJobs() {
+  const jobs = WEEK_JOBS[S.week] || [];
+  const grid = document.getElementById('jobs-grid');
+  grid.innerHTML = jobs.map(j => {
+    const isAcc = S.accepted.has(j.id);
+    return `
+    <div class="job-card${isAcc?' accepted':''} fade-up" id="card-${j.id}" onclick="toggleJob('${j.id}')">
+      <div class="job-check-overlay">✓</div>
+      <div class="job-top">
+        <span class="job-icon">${j.icon}</span>
+        <span class="job-badge badge-${j.size}">${sizeLabel(j.size)}</span>
+      </div>
+      <div class="job-name">${j.name}</div>
+      <div class="job-street">📍 ${j.street}</div>
+      <div class="job-meta">⏱ ${j.hrs} hr${j.hrs !== 1 ? 's' : ''}</div>
+      <div class="job-price">$${j.price}</div>
+      <button class="job-accept-btn" id="btn-${j.id}">
+        ${isAcc ? '✓ &nbsp;Accepted — tap to remove' : '✓ &nbsp;Accept'}
+      </button>
+    </div>`;
+  }).join('');
+
+  document.getElementById('jobs-heading').textContent = 'Available — Week ' + S.week;
+  updateCapacity();
+  updateRunBar();
+}
+
+/* ══════════════════════════════════════════
+   TOGGLE JOB
+══════════════════════════════════════════ */
+function toggleJob(id) {
+  if (S.weekRan) return;
+  if (S.accepted.has(id)) {
+    S.accepted.delete(id);
+  } else {
+    if (S.accepted.size >= 4) return; // max capacity
+    S.accepted.add(id);
+  }
+  // update card UI
+  const card = document.getElementById('card-' + id);
+  const btn  = document.getElementById('btn-' + id);
+  if (S.accepted.has(id)) {
+    card.classList.add('accepted');
+    btn.innerHTML = '✓ &nbsp;Accepted — tap to remove';
+  } else {
+    card.classList.remove('accepted');
+    btn.innerHTML = '✓ &nbsp;Accept';
+  }
+  updateCapacity();
+  updateRunBar();
+}
+
+function updateCapacity() {
+  const n = S.accepted.size;
+  document.getElementById('jobs-accepted-chip').textContent = n + ' of 4 accepted';
+  document.getElementById('jobs-accepted-chip').style.color = n > 0 ? 'var(--green)' : 'var(--text3)';
+  for (let i = 0; i < 4; i++) {
+    const slot = document.getElementById('slot-' + i);
+    slot.className = 'cap-slot' + (i < n ? ' filled' : '');
+  }
+  document.getElementById('cap-text').textContent = n + ' / 4 jobs this week';
+}
+
+function calcRevenue() {
+  const jobs = WEEK_JOBS[S.week] || [];
+  return jobs.filter(j => S.accepted.has(j.id)).reduce((s, j) => s + j.price, 0);
+}
+
+function updateRunBar() {
+  const n   = S.accepted.size;
+  const rev = calcRevenue();
+  const btn = document.getElementById('run-btn');
+  if (n === 0) {
+    document.getElementById('run-main-text').textContent = 'Accept at least 1 job to simulate the week';
+    document.getElementById('run-sub-text').textContent = 'Each week costs 10 ⚡';
+    btn.disabled = true;
+  } else {
+    const gas   = n * 5;
+    const wages = 180;
+    const est   = rev - gas - wages;
+    document.getElementById('run-main-text').textContent = n + ' job' + (n > 1 ? 's' : '') + ' · ~$' + rev + ' revenue';
+    document.getElementById('run-sub-text').textContent = 'Est. net: ' + (est >= 0 ? '+' : '') + '$' + est + '  ·  10 ⚡';
+    btn.disabled = false;
+  }
+  document.getElementById('run-btn-label').textContent = 'Run Week ' + S.week;
+}
+
+/* ══════════════════════════════════════════
+   RUN WEEK
+══════════════════════════════════════════ */
+function runWeek() {
+  if (S.weekRan) return;
+  const btn = document.getElementById('run-btn');
+  btn.classList.add('loading');
+  document.getElementById('run-btn-icon').innerHTML = '<div class="spinner"></div>';
+  document.getElementById('run-btn-label').textContent = 'Simulating…';
+
+  setTimeout(() => {
+    S.weekRan = true;
+    const rev   = calcRevenue();
+    const n     = S.accepted.size;
+    const gas   = n * 5;
+    const wages = 180;
+    const net   = rev - gas - wages;
+
+    // Update global state
+    S.cash    += net;
+    S.credits -= 10;
+    S.history.push({ week: S.week, label: weekLabel(net), jobs: n, rev, costs: gas + wages, net });
+
+    // Build results overlay
+    const ev = EVENTS[S.week] || { type:'📋 Routine Week', body:'Nothing unusual happened. Good steady work.' };
+    const netPos = net >= 0;
+    document.getElementById('res-week-label').textContent = 'WEEK ' + S.week + ' COMPLETE';
+    document.getElementById('res-headline').innerHTML   = (netPos ? '🎉' : '😅') + ' ' + (netPos ? 'Profitable!' : 'In the Red');
+    document.getElementById('res-revenue').textContent  = '+$' + rev;
+    document.getElementById('res-gas').textContent      = '−$' + gas;
+    document.getElementById('res-wages').textContent    = '−$' + wages;
+    document.getElementById('res-net').textContent      = (netPos ? '+' : '') + '$' + net;
+    document.getElementById('res-net').className        = 'result-net-val ' + (netPos ? 'pos' : 'neg');
+    document.getElementById('res-event-type').textContent = ev.type;
+    document.getElementById('res-event-body').textContent = ev.body;
+
+    // Show overlay
+    document.getElementById('results-overlay').classList.remove('hidden');
+  }, 2400);
+}
+
+function weekLabel(net) {
+  if (net > 50) return 'Great Week';
+  if (net > 0)  return 'First Profit!';
+  if (net > -50) return 'Almost There';
+  return 'Rough Week';
+}
+
+/* ══════════════════════════════════════════
+   NEXT WEEK
+══════════════════════════════════════════ */
+function nextWeek() {
+  document.getElementById('results-overlay').classList.add('hidden');
+  S.week++;
+  S.weekRan = false;
+  S.accepted.clear();
+
+  // Update header
+  document.getElementById('g-week-badge').textContent = 'Week ' + S.week;
+  document.getElementById('g-cash').textContent = '$' + S.cash;
+  document.getElementById('g-credits').textContent = S.credits;
+
+  // Reset run btn
+  const btn = document.getElementById('run-btn');
+  btn.classList.remove('loading');
+  btn.disabled = true;
+  document.getElementById('run-btn-icon').textContent = '▶';
+
+  // Update crew status (Tyler gets tired after 4 jobs)
+  const prevJobs = S.history[S.history.length - 1];
+  if (prevJobs && prevJobs.jobs >= 4) {
+    document.getElementById('tyler-status').innerHTML = '<span class="status-pip pip-tired">Tired</span>';
+  } else {
+    document.getElementById('tyler-status').innerHTML = '<span class="status-pip pip-great">Ready</span>';
+  }
+
+  // Render new jobs (if week 4 exists, else repeat week 3 jobs as "Week X")
+  if (!WEEK_JOBS[S.week]) {
+    // Create generic jobs for week 5+
+    WEEK_JOBS[S.week] = [
+      { id:'w'+S.week+'a', icon:'🏢', name:'Valley Springs HOA',  street:'Brookside Rd',    size:'large',  hrs:3.5, price:110 },
+      { id:'w'+S.week+'b', icon:'🏡', name:'Martinez Family',      street:'Rosewood Dr',     size:'medium', hrs:2,   price:65  },
+      { id:'w'+S.week+'c', icon:'🏡', name:'Wilson Residence',     street:'Birch Lane',      size:'small',  hrs:1,   price:35  },
+      { id:'w'+S.week+'d', icon:'🏠', name:'Riverside Apts',       street:'River Walk',      size:'medium', hrs:2,   price:70  },
+    ];
+  }
+
+  renderJobs();
+  renderHistory();
+  showTab('jobs');
+}
+
+/* ══════════════════════════════════════════
+   HISTORY
+══════════════════════════════════════════ */
+function renderHistory() {
+  const list = document.getElementById('hist-list');
+  if (!list) return;
+  const rows = [...S.history];
+
+  list.innerHTML = rows.map(r => {
+    const neg = r.net < 0;
+    return `<div class="hist-row">
+      <div class="hist-week">Wk ${r.week}</div>
+      <div>
+        <div class="hist-label">${r.label}</div>
+        <div class="hist-sub">${r.jobs} jobs · $${r.rev} revenue</div>
+      </div>
+      <div class="hist-jobs">${r.jobs} 🌿</div>
+      <div>
+        <div class="hist-net ${neg ? 'neg' : 'pos'}">${neg ? '' : '+'}$${r.net}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   CHART
+══════════════════════════════════════════ */
+function drawChart() {
+  const canvas = document.getElementById('netChart');
+  if (!canvas) return;
+  const W = canvas.offsetWidth || 400, H = 180;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // Build cash series from history
+  let cash = 0;
+  const cashData = [0]; // week 0 = starting (empty)
+  const labels   = ['Start'];
+  for (const r of S.history) {
+    cash += r.net;
+    cashData.push(cash);
+    labels.push('Wk ' + r.week);
+  }
+
+  const pad = { l:40, r:12, t:14, b:30 };
+  const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+  const minV = Math.min(0, ...cashData) * 1.1;
+  const maxV = Math.max(100, ...cashData) * 1.1;
+
+  const toX = i => pad.l + (i / Math.max(cashData.length - 1, 1)) * cw;
+  const toY = v => pad.t + ch - ((v - minV) / (maxV - minV)) * ch;
+  const zeroY = toY(0);
+
+  ctx.fillStyle = '#1b2e1b';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(74,222,128,.1)'; ctx.lineWidth = 1;
+  [0, 0.25, 0.5, 0.75, 1].forEach(t => {
+    const y = pad.t + t * ch;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+    const v = maxV - t * (maxV - minV);
+    ctx.fillStyle = '#3d6b48'; ctx.font = '10px system-ui'; ctx.textAlign = 'right';
+    ctx.fillText((v >= 0 ? '' : '') + Math.round(v), pad.l - 4, y + 3);
+  });
+
+  // Zero line
+  if (zeroY > pad.t && zeroY < H - pad.b) {
+    ctx.strokeStyle = 'rgba(248,113,113,.4)'; ctx.lineWidth = 1; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(pad.l, zeroY); ctx.lineTo(W - pad.r, zeroY); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  if (cashData.length < 2) {
+    ctx.fillStyle = '#3d6b48'; ctx.font = '12px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('Complete a week to see history', W / 2, H / 2);
+    return;
+  }
+
+  // Area
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(cashData[0]));
+  for (let i = 1; i < cashData.length; i++) ctx.lineTo(toX(i), toY(cashData[i]));
+  ctx.lineTo(toX(cashData.length - 1), H - pad.b);
+  ctx.lineTo(toX(0), H - pad.b);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, pad.t, 0, H - pad.b);
+  grad.addColorStop(0, 'rgba(74,222,128,.2)');
+  grad.addColorStop(1, 'rgba(74,222,128,.01)');
+  ctx.fillStyle = grad; ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(cashData[0]));
+  for (let i = 1; i < cashData.length; i++) ctx.lineTo(toX(i), toY(cashData[i]));
+  ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  // Dots
+  for (let i = 0; i < cashData.length; i++) {
+    const x = toX(i), y = toY(cashData[i]);
+    ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2);
+    const up = i === 0 || cashData[i] >= cashData[i-1];
+    ctx.fillStyle = up ? '#4ade80' : '#f87171';
+    ctx.fill();
+    ctx.strokeStyle = '#1b2e1b'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#3d6b48'; ctx.font = '9px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText(labels[i], x, H - 8);
+  }
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  // Prevent accidental form submission on Enter
+  document.getElementById('login-user').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+</script>
+</body>
+</html>
