@@ -23,9 +23,7 @@ body { margin: 0; }
   flex-direction: column;
 }
 
-.masthead { padding-block: 29px; border-bottom: 1px solid var(--line); }
-.monogram { font-size: 32px; font-weight: 800; letter-spacing: -3px; }
-.monogram span, .period { color: var(--accent); }
+.period { color: var(--accent); }
 
 main {
   flex: 1;
@@ -109,7 +107,6 @@ footer {
 
 @media (max-width: 760px) {
   .page { width: calc(100% - 48px); }
-  .masthead { padding-block: 20px; }
   main { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-block: 48px 64px; }
   .portrait { width: 60px; height: 60px; }
   h1 { font-size: clamp(68px, 14vw, 96px); }
