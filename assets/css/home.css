@@ -1,0 +1,19 @@
+/* Keep the X logo aligned with the existing Font Awesome icon circles. */
+.icon.icon-x:before {
+	content: "";
+}
+
+.icon-x svg {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 1.1em;
+	height: 1.1em;
+	transform: translate(-50%, -50%);
+	fill: currentColor;
+}
+
+.icons a:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 4px;
+}
