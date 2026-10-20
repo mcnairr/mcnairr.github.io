@@ -1,4 +1,9 @@
-/* Keep the X logo aligned with the existing Font Awesome icon circles. */
+/* Align icon circles independently of their font or SVG baselines. */
+.icons .icon {
+	vertical-align: middle;
+}
+
+/* Keep the X logo centered inside its circle. */
 .icon.icon-x:before {
 	content: "";
 }
